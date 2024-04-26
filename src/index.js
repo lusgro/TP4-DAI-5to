@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 //import ProvinceRouter from "./src/controllers/province-controller.js"
 
-import ValidacionesHelper from "./helpers/validaciones-helper";
+import ValidacionesHelper from "./helpers/validaciones-helper.js";
 
 const app = express();
 const port = 3000; // El puerto 3000 (http://localhost:3000)
@@ -258,7 +258,7 @@ app.put('/api/province/', (req, res) => {
         const longitude = ValidacionesHelper.getIntegerOrDefault(req.body.longitude, 0)
         const displayOrder = ValidacionesHelper.getIntegerOrDefault(req.body.display_order, 0)
     
-        provinciasArray.splice(index, 1, {
+        arrayProvincias.splice(index, 1, {
           "id": id, 
           "name": name,
           "full_name": fullName, 
@@ -266,13 +266,14 @@ app.put('/api/province/', (req, res) => {
           "longitude": longitude, 
           "display_order": displayOrder
         });
-            res.status(201).send()
+        console.log(arrayProvincias)
+        res.status(201).send()
       }
       catch (e) {
-        res.status(404).send(error)
+        res.status(404).send(e)
       }
   } else {
-        res.status(400).send(error)
+        res.status(400).send('El id no existe.')
     }
 })
 
