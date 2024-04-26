@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 //import ProvinceRouter from "./src/controllers/province-controller.js"
 
+import ValidacionesHelper from "./helpers/validaciones-helper";
+
 const app = express();
 const port = 3000; // El puerto 3000 (http://localhost:3000)
 // Agrego los Middlewares
@@ -206,12 +208,12 @@ const arrayProvincias = [{
 
 //app.use("/api/province", ProvinceRouter);
 
-app.get('api/province', (req, res) => {
+app.get('/api/province', (req, res) => {
     res.status(200).send(arrayProvincias)
 })
 
-app.get('api/province/:id', (req, res) => {
-    const id = req.params.id
+app.get('/api/province/:id', (req, res) => {
+    const id = ValidacionesHelper.getIntegerOrDefault(req.params.id, 0)
     const provincia = arrayProvincias.find(provincia => provincia.id === id)
     if (provincia) {
         res.status(200).send(provincia)
@@ -220,16 +222,17 @@ app.get('api/province/:id', (req, res) => {
     }
 })
 
-app.post('api/province/', (req, res) => {
-    const name = req.body.name
-    const fullName = req.body.full_name
-    const latitude = req.body.latitude
-    const longitude = req.body.longitude
-    const displayOrder = req.body.display_order
+app.post('/api/province/', (req, res) => {
+    const name = ValidacionesHelper.getStringOrDefault(req.body.name, "")
+    const fullName = ValidacionesHelper.getStringOrDefault(req.body.full_name, "")
+    const latitude = ValidacionesHelper.getIntegerOrDefault(req.body.latitude, 0)
+    const longitude = ValidacionesHelper.getIntegerOrDefault(req.body.longitude, 0)
+    const displayOrder = ValidacionesHelper.getIntegerOrDefault(req.body.display_order, 0)
 
-    if (name && fullName && latitude && longitude && displayOrder) {
+    if (name.length < 3 && fullName.length < 3 && latitude && longitude && displayOrder) {
+      const id = arrayProvincias[arrayProvincias.length - 1].id + 1
         const newProvince = {
-            id: uuidv4(),
+            id: id,
             name,
             fullName,
             latitude,
@@ -240,39 +243,44 @@ app.post('api/province/', (req, res) => {
         res.status(201).send()
     }
     else {
-        res.status(400).send(error)
+        res.status(400).send('El nombre no puede ser vacío y debe tener al menos 3 caracteres.')
     }
 })
 
-app.put('api/province/', (req, res) => {
-    const id = req.params.id
-    const name = req.body.name
-    const fullName = req.body.full_name
-    const latitude = req.body.latitude
-    const longitude = req.body.longitude
-    const displayOrder = req.body.display_order
-
-    const provincia = arrayProvincias.find(provincia => provincia.id === id)
-    if (provincia && name && fullName && latitude && longitude && displayOrder) {
-        provincia.name = name
-        provincia.fullName = fullName
-        provincia.latitude = latitude
-        provincia.longitude = longitude
-        provincia.displayOrder = displayOrder
-        res.status(201).send()
-    } else if (!provincia) {
+app.put('/api/province/', (req, res) => {
+  const id = ValidacionesHelper.getIntegerOrDefault(req.body.id, 0)
+  const index = arrayProvincias.findIndex(provincia => provincia.id === id)
+    if (index != -1) {
+      try {
+        const name = ValidacionesHelper.getStringOrDefault(req.body.name, "")
+        const fullName = ValidacionesHelper.getStringOrDefault(req.body.full_name, "")
+        const latitude = ValidacionesHelper.getIntegerOrDefault(req.body.latitude, 0)
+        const longitude = ValidacionesHelper.getIntegerOrDefault(req.body.longitude, 0)
+        const displayOrder = ValidacionesHelper.getIntegerOrDefault(req.body.display_order, 0)
+    
+        provinciasArray.splice(index, 1, {
+          "id": id, 
+          "name": name,
+          "full_name": fullName, 
+          "latitude": latitude, 
+          "longitude": longitude, 
+          "display_order": displayOrder
+        });
+            res.status(201).send()
+      }
+      catch (e) {
         res.status(404).send(error)
-    }
-    else {
+      }
+  } else {
         res.status(400).send(error)
     }
 })
 
-app.delete('api/province/:id', (req, res) => {
-    const id = req.params.id
-    const provincia = arrayProvincias.find(provincia => provincia.id === id)
-    if (provincia) {
-        arrayProvincias = arrayProvincias.filter(provincia => provincia.id !== id)
+app.delete('/api/province/:id', (req, res) => {
+    const id = ValidacionesHelper.getIntegerOrDefault(req.params.id, 0)
+    const index = arrayProvincias.findIndex(provincia => provincia.id === id)
+    if (index != 1) {
+        arrayProvincias.splice(index, 1)
         res.status(200).send()
     } else {
         res.status(404).send()
