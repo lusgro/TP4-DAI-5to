@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import ProvinceRouter from "./src/controllers/province-controller.js"
+//import ProvinceRouter from "./src/controllers/province-controller.js"
 
 const app = express();
 const port = 3000; // El puerto 3000 (http://localhost:3000)
@@ -11,7 +11,7 @@ app.use(express.json()); // Middleware para parsear y comprender JSON.
 // Endpoints (todos los Routers)
 //
 
-arrayProvincias = [{
+const arrayProvincias = [{
     "id": 1,
     "name": "Buenos Aires",
     "fullName": "Buenos Aires, Argentina",
@@ -204,7 +204,7 @@ arrayProvincias = [{
     "displayOrder": 24
   }]
 
-app.use("/api/province", ProvinceRouter);
+//app.use("/api/province", ProvinceRouter);
 
 app.get('api/province', (req, res) => {
     res.status(200).send(arrayProvincias)
