@@ -229,7 +229,7 @@ app.post('/api/province/', (req, res) => {
     const longitude = ValidacionesHelper.getIntegerOrDefault(req.body.longitude, 0)
     const displayOrder = ValidacionesHelper.getIntegerOrDefault(req.body.display_order, 0)
 
-    if (name.length < 3 && fullName.length < 3 && latitude && longitude && displayOrder) {
+    if (name.length > 3 && fullName.length > 3 && latitude && longitude && displayOrder) {
       const id = arrayProvincias[arrayProvincias.length - 1].id + 1
         const newProvince = {
             id: id,
@@ -253,20 +253,25 @@ app.put('/api/province/', (req, res) => {
     if (index != -1) {
       try {
         const name = ValidacionesHelper.getStringOrDefault(req.body.name, "")
+        if (name.length > 3) {
+          arrayProvincias[index].name = name
+        }
         const fullName = ValidacionesHelper.getStringOrDefault(req.body.full_name, "")
+        if (fullName.length > 3) {
+          arrayProvincias[index].fullName = fullName
+        }
         const latitude = ValidacionesHelper.getIntegerOrDefault(req.body.latitude, 0)
+        if (latitude) {
+          arrayProvincias[index].latitude = latitude
+        }
         const longitude = ValidacionesHelper.getIntegerOrDefault(req.body.longitude, 0)
+        if (longitude) {
+          arrayProvincias[index].longitude = longitude
+        }
         const displayOrder = ValidacionesHelper.getIntegerOrDefault(req.body.display_order, 0)
-    
-        arrayProvincias.splice(index, 1, {
-          "id": id, 
-          "name": name,
-          "full_name": fullName, 
-          "latitude": latitude, 
-          "longitude": longitude, 
-          "display_order": displayOrder
-        });
-        console.log(arrayProvincias)
+        if (displayOrder) {
+          arrayProvincias[index].displayOrder = displayOrder
+        }
         res.status(201).send()
       }
       catch (e) {
