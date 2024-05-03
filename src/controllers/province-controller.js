@@ -1,101 +1,83 @@
 import { Router } from "express";
-import ProvinceService from "../services/province-service";
-import ValidacionesHelper from "../helpers/validaciones-helper";
+import ProvinceService from "../services/province-service.js";
+import ValidacionesHelper from "../helpers/validaciones-helper.js";
 
-const router = Router();
+const ProvinceRouter = Router();
 const svc = new ProvinceService(); // Instanciación del Service.
 
-let arrayProvincias = [];
-
-router.get('', async (req, res) => {
+ProvinceRouter.get("", async (req, res) => {
   let respuesta;
   const returnArray = await svc.getAllAsync();
   if (returnArray != null) {
-    arrayProvincias = returnArray;
     respuesta = res.status(200).json(returnArray);
   } else {
-    respuesta = res.status(500).send('Error interno');
+    respuesta = res.status(500).send(`Error interno.`);
   }
   return respuesta;
 });
 
-router.get('/:id', async (req, res) => {
-    const id = ValidacionesHelper.getIntegerOrDefault(req.params.id, 0)
-    const provincia = arrayProvincias.find(provincia => provincia.id === id)
-    if (provincia) {
-        res.status(200).send(provincia)
+ProvinceRouter.get("/:id", async (req, res) => {
+  let respuesta;
+  const id = req.params.id;
+  if (ValidacionesHelper.getIntegerOrDefault(id, 0) > 0) {
+    const returnArray = await svc.getByIdAsync(id);
+    if (returnArray != null) {
+      respuesta = res.status(200).json(returnArray);
     } else {
-        res.status(404).send()
+      respuesta = res.status(500).send(`Error interno.`);
     }
-});
-
-router.post('', async (req, res) => {
-    const name = ValidacionesHelper.getStringOrDefault(req.body.name, "")
-    const fullName = ValidacionesHelper.getStringOrDefault(req.body.full_name, "")
-    const latitude = ValidacionesHelper.getIntegerOrDefault(req.body.latitude, 0)
-    const longitude = ValidacionesHelper.getIntegerOrDefault(req.body.longitude, 0)
-    const displayOrder = ValidacionesHelper.getIntegerOrDefault(req.body.display_order, 0)
-
-    if (name.length > 3 && fullName.length > 3 && latitude && longitude && displayOrder) {
-      const id = arrayProvincias[arrayProvincias.length - 1].id + 1
-        const newProvince = {
-            id: id,
-            name,
-            fullName,
-            latitude,
-            longitude,
-            displayOrder
-        }
-        arrayProvincias.push(newProvince)
-        res.status(201).send()
-    }
-    else {
-        res.status(400).send('El nombre no puede ser vacío y debe tener al menos 3 caracteres.')
-    }
-});
-
-router.put('', async (req, res) => {
-  const id = ValidacionesHelper.getIntegerOrDefault(req.body.id, 0)
-  const index = arrayProvincias.findIndex(provincia => provincia.id === id)
-    if (index != -1) {
-      try {
-        const name = ValidacionesHelper.getStringOrDefault(req.body.name, "")
-        if (name.length > 3) {
-          arrayProvincias[index].name = name
-        }
-        const fullName = ValidacionesHelper.getStringOrDefault(req.body.full_name, "")
-        if (fullName.length > 3) {
-          arrayProvincias[index].fullName = fullName
-        }
-        const latitude = ValidacionesHelper.getIntegerOrDefault(req.body.latitude, 0)
-        if (latitude) {
-          arrayProvincias[index].latitude = latitude
-        }
-        const longitude = ValidacionesHelper.getIntegerOrDefault(req.body.longitude, 0)
-        if (longitude) {
-          arrayProvincias[index].longitude = longitude
-        }
-        const displayOrder = ValidacionesHelper.getIntegerOrDefault(req.body.display_order, 0)
-        if (displayOrder) {
-          arrayProvincias[index].displayOrder = displayOrder
-        }
-        res.status(201).send()
-      }
-      catch (e) {
-        res.status(404).send(e)
-      }
   } else {
-        res.status(400).send('El id no existe.')
-    }
+    respuesta = res.status(400).send(`Error en la solicitud.`);
+  }
+  return respuesta;
 });
 
-router.delete('/:id', async (req, res) => {
-    const id = ValidacionesHelper.getIntegerOrDefault(req.params.id, 0)
-    const index = arrayProvincias.findIndex(provincia => provincia.id === id)
-    if (index != -1) {
-        arrayProvincias.splice(index, 1)
-        res.status(200).send()
+ProvinceRouter.post("", async (req, res) => {
+  let respuesta;
+  const entity = req.body;
+  console.log(entity.name);
+  if (entity != null) {
+    const returnArray = await svc.createAsync(entity);
+    if (returnArray != null) {
+      respuesta = res.status(200).json(returnArray);
     } else {
-        res.status(404).send()
+      respuesta = res.status(500).send(`Error interno.`);
     }
+  } else {
+    respuesta = res.status(400).send(`Error en la solicitud.`);
+  }
+  return respuesta;
 });
+
+ProvinceRouter.put("", async (req, res) => {
+  let respuesta;
+  const entity = req.body;
+  if (entity != null) {
+    const returnArray = await svc.updateAsync(entity);
+    if (returnArray != null) {
+      respuesta = res.status(200).json(returnArray);
+    } else {
+      respuesta = res.status(500).send(`Error interno.`);
+    }
+  } else {
+    respuesta = res.status(400).send(`Error en la solicitud.`);
+  }
+  return respuesta;
+});
+
+ProvinceRouter.delete("/:id", async (req, res) => {
+  const id = req.params.id
+  if (ValidacionesHelper.getIntegerOrDefault(id, 0) > 0) {
+    const result = svc.deleteByIdAsync(id)
+    if (result) {
+      res.status(200).send(`Registro eliminado.`);
+    } else {
+      res.status(500).send(`Error interno.`);
+    }
+  }
+  else {
+    res.status(400).send(`Error en la solicitud.`);
+  }
+});
+
+export default ProvinceRouter;

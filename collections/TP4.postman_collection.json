@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ff459039-cd79-41bd-afdd-1d6fbcb30a5e",
+		"_postman_id": "3351ec86-868c-4376-99f1-4d1a0a40f30c",
 		"name": "TP4",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -53,7 +53,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n\"name\" : \"Chaco Provincia\",\r\n\"full_name\" : \"Provincia de Chaco\",\r\n\"latitude\" : -24.895086288452148,\r\n\"longitude\" : -59.93218994140625,\r\n\"display_order\" : 100\r\n}",
+					"raw": "{\r\n    \"name\": \"Mendozaaaa\",\r\n    \"fullName\": \"Mendoza, Argentina\",\r\n    \"latitude\": -32.8908,\r\n    \"longitude\": -68.8272,\r\n    \"displayOrder\": 13\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -82,7 +82,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": 1,\r\n    \"full_name\" : \"Provincia de Buenos Aires\",\r\n    \"latitude\" : -1,\r\n    \"longitude\" : 2\r\n}",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"name\": \"Malos Aires\",\r\n    \"fullName\": \"Malos Aires, Argentina\",\r\n    \"latitude\": -34.6037,\r\n    \"longitude\": -58.3816,\r\n    \"displayOrder\": 1\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
