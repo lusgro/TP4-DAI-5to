@@ -1,18 +1,24 @@
 import express from "express";
 import cors from "cors";
-//import ProvinceRouter from "./src/controllers/province-controller.js"
-
-import ValidacionesHelper from "./helpers/validaciones-helper.js";
+import ProvinceRouter from "./src/controllers/province-controller.js";
 
 const app = express();
-const port = 3000; // El puerto 3000 (http://localhost:3000)
-// Agrego los Middlewares
-app.use(cors()); // Middleware de CORS.
-app.use(express.json()); // Middleware para parsear y comprender JSON.
-//
-// Endpoints (todos los Routers)
-//
+const port = 3000;
 
+// Inclusión de los Middlewares
+app.use(cors());
+app.use(express.json());
+app.use('/front', express.static('public'));
+app.use("/api/event", EventRouter);
+app.use("/api/provinces", ProvinceRouter);
+app.use("/api/user", UserRouter);
+app.use(unknownEndpoint);
+
+app.listen(port, () => {
+  console.log(`"server" Listening on port ${port}`);
+})
+
+/*
 const arrayProvincias = [{
     "id": 1,
     "name": "Buenos Aires",
@@ -205,96 +211,4 @@ const arrayProvincias = [{
     "longitude": -65.2176,
     "displayOrder": 24
   }]
-
-//app.use("/api/province", ProvinceRouter);
-
-app.get('/api/province', (req, res) => {
-    res.status(200).send(arrayProvincias)
-})
-
-app.get('/api/province/:id', (req, res) => {
-    const id = ValidacionesHelper.getIntegerOrDefault(req.params.id, 0)
-    const provincia = arrayProvincias.find(provincia => provincia.id === id)
-    if (provincia) {
-        res.status(200).send(provincia)
-    } else {
-        res.status(404).send()
-    }
-})
-
-app.post('/api/province/', (req, res) => {
-    const name = ValidacionesHelper.getStringOrDefault(req.body.name, "")
-    const fullName = ValidacionesHelper.getStringOrDefault(req.body.full_name, "")
-    const latitude = ValidacionesHelper.getIntegerOrDefault(req.body.latitude, 0)
-    const longitude = ValidacionesHelper.getIntegerOrDefault(req.body.longitude, 0)
-    const displayOrder = ValidacionesHelper.getIntegerOrDefault(req.body.display_order, 0)
-
-    if (name.length > 3 && fullName.length > 3 && latitude && longitude && displayOrder) {
-      const id = arrayProvincias[arrayProvincias.length - 1].id + 1
-        const newProvince = {
-            id: id,
-            name,
-            fullName,
-            latitude,
-            longitude,
-            displayOrder
-        }
-        arrayProvincias.push(newProvince)
-        res.status(201).send()
-    }
-    else {
-        res.status(400).send('El nombre no puede ser vacío y debe tener al menos 3 caracteres.')
-    }
-})
-
-app.put('/api/province/', (req, res) => {
-  const id = ValidacionesHelper.getIntegerOrDefault(req.body.id, 0)
-  const index = arrayProvincias.findIndex(provincia => provincia.id === id)
-    if (index != -1) {
-      try {
-        const name = ValidacionesHelper.getStringOrDefault(req.body.name, "")
-        if (name.length > 3) {
-          arrayProvincias[index].name = name
-        }
-        const fullName = ValidacionesHelper.getStringOrDefault(req.body.full_name, "")
-        if (fullName.length > 3) {
-          arrayProvincias[index].fullName = fullName
-        }
-        const latitude = ValidacionesHelper.getIntegerOrDefault(req.body.latitude, 0)
-        if (latitude) {
-          arrayProvincias[index].latitude = latitude
-        }
-        const longitude = ValidacionesHelper.getIntegerOrDefault(req.body.longitude, 0)
-        if (longitude) {
-          arrayProvincias[index].longitude = longitude
-        }
-        const displayOrder = ValidacionesHelper.getIntegerOrDefault(req.body.display_order, 0)
-        if (displayOrder) {
-          arrayProvincias[index].displayOrder = displayOrder
-        }
-        res.status(201).send()
-      }
-      catch (e) {
-        res.status(404).send(e)
-      }
-  } else {
-        res.status(400).send('El id no existe.')
-    }
-})
-
-app.delete('/api/province/:id', (req, res) => {
-    const id = ValidacionesHelper.getIntegerOrDefault(req.params.id, 0)
-    const index = arrayProvincias.findIndex(provincia => provincia.id === id)
-    if (index != 1) {
-        arrayProvincias.splice(index, 1)
-        res.status(200).send()
-    } else {
-        res.status(404).send()
-    }
-})
-//
-// Inicio el Server y lo pongo a escuchar.
-//
-app.listen(port, () => {
-console.log(`Example app listening on port ${port}`)
-})
+*/
